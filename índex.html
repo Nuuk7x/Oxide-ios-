@@ -1,0 +1,524 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080510">
+<title>VOID X</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #080510;
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BOTÃO BURACO NEGRO */
+#orb {
+  position: fixed;
+  right: 22px;
+  bottom: 25px;
+  z-index: 1000;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  border: 2px solid #a855f7;
+  background:
+    radial-gradient(circle at center, #000 0 22%, transparent 24%),
+    conic-gradient(from 30deg, #250044, #b026ff, #080510, #7620bd, #250044);
+  box-shadow: 0 0 15px #a855f7, 0 0 35px #7015bb;
+  cursor: pointer;
+  animation: pulse 3s infinite;
+}
+
+#orb::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 3px solid #d68cff;
+  border-radius: 50%;
+  transform: rotate(-25deg) scaleY(.48);
+  box-shadow: 0 0 12px #bd55ff;
+}
+
+@keyframes pulse {
+  50% { box-shadow: 0 0 28px #c65cff, 0 0 50px #7015bb; }
+}
+
+/* PAINEL */
+#menu {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  width: min(92%, 410px);
+  max-height: 82vh;
+  overflow-y: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(12, 7, 22, .97);
+  border: 1px solid #9238d3;
+  border-radius: 15px;
+  box-shadow: 0 0 35px #7119ad;
+}
+
+#menu.open {
+  display: block;
+}
+
+.header {
+  padding: 17px;
+  text-align: center;
+  border-bottom: 1px solid #51206e;
+  position: relative;
+}
+
+.header h1 {
+  color: #c77aff;
+  font-size: 27px;
+  letter-spacing: 5px;
+  text-shadow: 0 0 12px #9c39ed;
+}
+
+.header p {
+  color: #9c83b1;
+  font-size: 10px;
+  margin-top: 5px;
+  letter-spacing: 2px;
+}
+
+#close {
+  position: absolute;
+  right: 13px;
+  top: 12px;
+  background: none;
+  border: none;
+  color: #d9a4ff;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+/* ABAS */
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 5px;
+  padding: 10px;
+  border-bottom: 1px solid #38184f;
+}
+
+.tab {
+  flex: 1;
+  min-width: 65px;
+  padding: 9px 7px;
+  border: 1px solid #552174;
+  background: #170d24;
+  color: #c9a6df;
+  border-radius: 6px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #7626a8;
+  color: white;
+  border-color: #ce8aff;
+  box-shadow: 0 0 10px #822bc0;
+}
+
+/* CONTEÚDO */
+.content {
+  padding: 15px;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.section-title {
+  color: #c77aff;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin: 8px 0 13px;
+  border-bottom: 1px solid #49205e;
+  padding-bottom: 7px;
+}
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 5px;
+  border-bottom: 1px solid #24152f;
+  font-size: 13px;
+  color: #e4d5ef;
+}
+
+.option input[type="checkbox"] {
+  accent-color: #a83bea;
+  width: 17px;
+  height: 17px;
+}
+
+.slider-box {
+  padding: 12px 5px;
+  border-bottom: 1px solid #24152f;
+}
+
+.slider-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.slider-top span {
+  color: #c77aff;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #a83bea;
+}
+
+select {
+  background: #1b1028;
+  color: white;
+  border: 1px solid #7932a6;
+  padding: 6px;
+  border-radius: 5px;
+}
+
+.action {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+  background: linear-gradient(90deg, #64218d, #a13ad1);
+  border: 1px solid #c77aff;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.footer {
+  text-align: center;
+  color: #8d6ba3;
+  font-size: 10px;
+  padding: 13px;
+  border-top: 1px solid #38184f;
+  letter-spacing: 2px;
+}
+
+.note {
+  color: #8e79a0;
+  font-size: 10px;
+  text-align: center;
+  padding: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BOTÃO BURACO NEGRO -->
+<button id="orb" aria-label="Abrir ou fechar VOID X"></button>
+
+<!-- MENU -->
+<div id="menu">
+
+  <div class="header">
+    <button id="close">×</button>
+    <h1>VOID X</h1>
+    <p>OXIDE SURVIVAL ISLAND</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-page="aim">AIM</button>
+    <button class="tab" data-page="bots">BOT HUNTER</button>
+    <button class="tab" data-page="esp">ESP</button>
+    <button class="tab" data-page="world">WORLD</button>
+    <button class="tab" data-page="radar">RADAR</button>
+    <button class="tab" data-page="misc">MISC</button>
+    <button class="tab" data-page="config">CONFIG</button>
+  </div>
+
+  <div class="content">
+
+    <!-- AIM -->
+    <section class="page active" id="aim">
+      <div class="section-title">AIM SETTINGS</div>
+
+      <label class="option">Silent Aim (visual)
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Aimbot (visual)
+        <input type="checkbox">
+      </label>
+
+      <div class="slider-box">
+        <div class="slider-top">
+          <label>FOV</label><span id="fovValue">90</span>
+        </div>
+        <input type="range" min="0" max="360" value="90"
+          oninput="fovValue.textContent=this.value">
+      </div>
+
+      <label class="option">Target
+        <select>
+          <option>Head</option>
+          <option>Chest</option>
+        </select>
+      </label>
+
+      <label class="option">Target Type
+        <select>
+          <option>Players</option>
+          <option>Bots</option>
+          <option>All</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- BOTS -->
+    <section class="page" id="bots">
+      <div class="section-title">BOT HUNTER</div>
+
+      <label class="option">Mostrar bots
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Nome dos bots
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Caixa dos bots
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Distância dos bots
+        <input type="checkbox">
+      </label>
+    </section>
+
+    <!-- ESP -->
+    <section class="page" id="esp">
+      <div class="section-title">PLAYER ESP</div>
+
+      <label class="option">ESP Players
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Player Box
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Health
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Distance
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Skeleton
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Player Names
+        <input type="checkbox">
+      </label>
+    </section>
+
+    <!-- WORLD -->
+    <section class="page" id="world">
+      <div class="section-title">WORLD ESP</div>
+
+      <label class="option">Wood
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Stone
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Sulfur
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Iron
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Boxes
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Barrels
+        <input type="checkbox">
+      </label>
+    </section>
+
+    <!-- RADAR -->
+    <section class="page" id="radar">
+      <div class="section-title">RADAR SETTINGS</div>
+
+      <label class="option">Radar
+        <input type="checkbox">
+      </label>
+
+      <div class="slider-box">
+        <div class="slider-top">
+          <label>Radar Size</label><span id="sizeValue">150</span>
+        </div>
+        <input type="range" min="50" max="300" value="150"
+          oninput="sizeValue.textContent=this.value">
+      </div>
+
+      <div class="slider-box">
+        <div class="slider-top">
+          <label>Radar Zoom</label><span id="zoomValue">1</span>
+        </div>
+        <input type="range" min="1" max="10" value="1"
+          oninput="zoomValue.textContent=this.value">
+      </div>
+    </section>
+
+    <!-- MISC -->
+    <section class="page" id="misc">
+      <div class="section-title">MISC SETTINGS</div>
+
+      <label class="option">FPS Display
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Ping Display
+        <input type="checkbox">
+      </label>
+
+      <label class="option">Show Watermark
+        <input type="checkbox" checked>
+      </label>
+
+      <div class="slider-box">
+        <div class="slider-top">
+          <label>Menu Transparency</label>
+          <span id="transValue">97%</span>
+        </div>
+        <input type="range" min="30" max="100" value="97"
+          oninput="transValue.textContent=this.value+'%'">
+      </div>
+    </section>
+
+    <!-- CONFIG -->
+    <section class="page" id="config">
+      <div class="section-title">CONFIGURATION</div>
+
+      <label class="option">Theme
+        <select>
+          <option>Purple Void</option>
+          <option>Dark</option>
+          <option>Blue</option>
+        </select>
+      </label>
+
+      <button class="action" onclick="saveConfig()">
+        SAVE CONFIG
+      </button>
+
+      <button class="action" onclick="loadConfig()">
+        LOAD CONFIG
+      </button>
+
+      <p class="note" id="configStatus">Configuration demonstrativa</p>
+    </section>
+
+  </div>
+
+  <div class="footer">
+    CREATED BY @Nuuk7x
+  </div>
+
+  <p class="note">
+    Interface visual demonstrativa. Os controles não alteram o jogo.
+  </p>
+
+</div>
+
+<script>
+const menu = document.getElementById("menu");
+const orb = document.getElementById("orb");
+const closeButton = document.getElementById("close");
+
+orb.addEventListener("click", () => {
+  menu.classList.toggle("open");
+});
+
+closeButton.addEventListener("click", () => {
+  menu.classList.remove("open");
+});
+
+// SISTEMA DE ABAS
+const tabs = document.querySelectorAll(".tab");
+const pages = document.querySelectorAll(".page");
+
+tabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    tabs.forEach(item => item.classList.remove("active"));
+    pages.forEach(page => page.classList.remove("active"));
+
+    tab.classList.add("active");
+    document.getElementById(tab.dataset.page)
+      .classList.add("active");
+  });
+});
+
+// CONFIGURAÇÃO DEMONSTRATIVA
+function saveConfig() {
+  const values = [...document.querySelectorAll(
+    'input[type="checkbox"]'
+  )].map(input => input.checked);
+
+  localStorage.setItem("voidConfig", JSON.stringify(values));
+  document.getElementById("configStatus").textContent =
+    "Configuração salva!";
+}
+
+function loadConfig() {
+  const saved = localStorage.getItem("voidConfig");
+
+  if (!saved) {
+    document.getElementById("configStatus").textContent =
+      "Nenhuma configuração salva.";
+    return;
+  }
+
+  const values = JSON.parse(saved);
+  const inputs = document.querySelectorAll(
+    'input[type="checkbox"]'
+  );
+
+  inputs.forEach((input, index) => {
+    input.checked = values[index] ?? false;
+  });
+
+  document.getElementById("configStatus").textContent =
+    "Configuração carregada!";
+}
+</script>
+
+</body>
+</html>
